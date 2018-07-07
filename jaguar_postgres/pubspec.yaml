@@ -1,5 +1,5 @@
 name: jaguar_postgres
-version: 0.5.0
+version: 2.1.1
 description: A postgres interceptor for jaguar
 
 authors:
@@ -8,9 +8,16 @@ authors:
 homepage: http://jaguar-dart.github.io
 
 dependencies:
-  postgres: '>=0.9.1 <0.10.0'
-  connection_pool: '>=0.1.2 <0.2.0'
-  jaguar: '>=0.5.3 <0.6.0'
+  postgres: ^1.0.0-beta.1
+  jaguar: ^2.1.8
 
 dev_dependencies:
-  jaguar_reflect: ^0.5.0
+  jaguar_reflect: ^2.1.1
+
+dependency_overrides:
+  jaguar:
+    path: ../../jaguar/jaguar
+  jaguar_reflect:
+    path: ../../jaguar/reflect
+  conn_pool:
+    path: ../conn_pool

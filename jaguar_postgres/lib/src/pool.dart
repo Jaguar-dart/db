@@ -1,59 +1,58 @@
 import 'dart:async';
 
-import 'package:connection_pool/connection_pool.dart';
+import 'package:conn_pool/conn_pool.dart';
 import 'package:postgres/postgres.dart';
 
-class PostgresDbPool extends ConnectionPool<PostgreSQLConnection> {
-  String host;
+class PostgresManager extends ConnectionManager<PostgreSQLConnection> {
+  /// Hostname of database this connection refers to.
+  final String host;
 
-  int port;
+  /// Port of database this connection refers to.
+  final int port;
 
-  String databaseName;
+  /// Name of database this connection refers to.
+  final String databaseName;
 
-  String username;
+  /// Username for authenticating this connection.
+  final String username;
 
-  String password;
+  /// Password for authenticating this connection.
+  final String password;
 
-  bool useSsl;
+  /// Whether or not this connection should connect securely.
+  final bool useSsl;
 
-  PostgresDbPool(this.host, this.port, this.databaseName,
-      {this.username, this.password, this.useSsl: false, int poolSize: 10})
-      : super(poolSize);
+  /// The amount of time this connection will wait during connecting before
+  /// giving up.
+  final int timeoutInSeconds;
+
+  /// The timezone of this connection for date operations that don't specify a
+  /// timezone.
+  final String timeZone;
+
+  PostgresManager(this.databaseName,
+      {this.host: 'localhost',
+      this.port: 5432,
+      this.username: 'postgres',
+      this.password,
+      this.useSsl: false,
+      this.timeoutInSeconds: 30,
+      this.timeZone: "UTC"});
 
   @override
-  void closeConnection(PostgreSQLConnection connection) {
-    connection.close();
-  }
-
-  @override
-  Future<PostgreSQLConnection> openNewConnection() async {
-    PostgreSQLConnection conn = new PostgreSQLConnection(
-        host, port, databaseName,
-        username: username, password: password, useSSL: useSsl);
+  Future<PostgreSQLConnection> open() async {
+    PostgreSQLConnection conn = PostgreSQLConnection(host, port, databaseName,
+        username: username,
+        password: password,
+        useSSL: useSsl,
+        timeoutInSeconds: timeoutInSeconds,
+        timeZone: timeZone);
     await conn.open();
     return conn;
   }
 
-  /// Collection of named pools
-  static Map<String, PostgresDbPool> _pools = {};
-
-  /// Creates a named pool or returns an existing one if the pool with given
-  /// name already exists
-  factory PostgresDbPool.Named(String host, int port, String databaseName,
-      {String username,
-      String password,
-      bool useSSL: false,
-      int poolSize: 10}) {
-    final String name =
-        '$username:$password@$host:$port/$databaseName/$poolSize/$useSSL';
-    if (_pools[name] == null) {
-      _pools[name] = new PostgresDbPool(host, port, databaseName,
-          username: username,
-          password: password,
-          useSsl: useSSL,
-          poolSize: poolSize);
-    }
-
-    return _pools[name];
+  @override
+  Future<void> close(PostgreSQLConnection connection) {
+    return connection.close();
   }
 }

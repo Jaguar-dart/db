@@ -1,0 +1,11 @@
+name: conn_pool
+description: A starting point for Dart libraries or applications.
+version: 2.1.1
+homepage: https://github.com/Jaguar-dart/db
+author: Ravi Teja Gudapati <tejainece@gmail.com>
+
+environment:
+  sdk: '>=2.0.0-dev.55.0 <2.0.0'
+
+dev_dependencies:
+  test: ^1.2.0

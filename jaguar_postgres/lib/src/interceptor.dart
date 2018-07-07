@@ -4,71 +4,51 @@ import 'dart:async';
 
 import 'package:jaguar/jaguar.dart';
 import 'package:postgres/postgres.dart';
-import 'package:connection_pool/connection_pool.dart';
+import 'package:conn_pool/conn_pool.dart';
 
 import 'pool.dart';
 
-class PostgresDb extends Interceptor {
-  /// ID for the interceptor instance
-  final String id;
-
-  final String host;
-
-  final int port;
-
-  final String databaseName;
-
-  final String username;
-
-  final String password;
-
-  final bool useSSL;
-
-  final int poolSize;
-
+class PostgresPool {
   /// The connection pool
-  PostgresDbPool _pool;
+  final Pool<PostgreSQLConnection> pool;
 
-  /// The connection
-  ManagedConnection<PostgreSQLConnection> _managedConnection;
+  PostgresPool(String databaseName,
+      {String host: 'localhost',
+      int port: 5432,
+      String username: 'postgres',
+      String password,
+      bool useSsl: false,
+      int timeoutInSeconds: 30,
+      String timeZone: "UTC",
+      int minPoolSize: 10,
+      int maxPoolSize: 10})
+      : pool = SharedPool(
+            PostgresManager(databaseName,
+                host: host,
+                port: port,
+                username: username,
+                password: password,
+                useSsl: useSsl,
+                timeoutInSeconds: timeoutInSeconds,
+                timeZone: timeZone),
+            minSize: minPoolSize,
+            maxSize: maxPoolSize);
 
-  /// Returns the mongodb connection
-  PostgreSQLConnection get conn => _managedConnection?.conn;
+  PostgresPool.fromPool({this.pool});
 
-  PostgresDb(this.host, this.port, this.databaseName,
-      {this.username,
-      this.password,
-      this.useSSL: false,
-      this.poolSize: 10,
-      this.id});
+  PostgresPool.fromManager({PostgresManager manager})
+      : pool = SharedPool(manager);
 
-  Future<PostgreSQLConnection> pre(Context ctx) async {
-    _pool = new PostgresDbPool.Named(host, port, databaseName,
-        username: username,
-        password: password,
-        useSSL: useSSL,
-        poolSize: poolSize);
-    _managedConnection = await _pool.getConnection();
-    return conn;
-  }
-
-  /// Closes the connection on route exit
-  Null post(Context ctx, Response incoming) {
-    _releaseConn();
-    return null;
-  }
-
-  /// Closes the connection in case an exception occurs in route chain before
-  /// [post] is called
-  Future<Null> onException() async {
-    _releaseConn();
+  Future<PostgreSQLConnection> newInterceptor(Context ctx) async {
+    Connection<PostgreSQLConnection> conn = await pool.get();
+    ctx.addVariable(conn.connection);
+    ctx.after.add((_) => _releaseConn(conn));
+    ctx.onException.add((Context ctx, _1, _2) => _releaseConn(conn));
+    return conn.connection;
   }
 
   /// Releases connection
-  void _releaseConn() {
-    if (_managedConnection != null) {
-      _pool.releaseConnection(_managedConnection);
-      _managedConnection = null;
-    }
+  Future<void> _releaseConn(Connection<PostgreSQLConnection> conn) async {
+    if (!conn.isReleased) await conn.release();
   }
 }
