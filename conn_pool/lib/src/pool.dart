@@ -1,6 +1,21 @@
 import 'dart:async';
 import 'counted_set.dart';
 
+/// Creates a [Pool] whose members can be shared. The pool keeps a record of
+/// between [minSize] and [maxSize] open items.
+///
+/// The [manager] contains the logic to open and close connections.
+///
+/// Example:
+///     final pool = SharedPool(PostgresManager('exampleDB'), minSize: 5,
+///                    maxSize: 10);
+///     createTable() async {
+///       Connection<PostgreSQLConnection> conn = await pool.get();
+///       PostgreSQLConnection db = conn.connection;
+///       await db.execute(
+///           "CREATE TABLE posts (id SERIAL PRIMARY KEY, name VARCHAR(255), age INT);");
+///       await conn.release();
+///     }
 class SharedPool<T> implements Pool<T> {
   final ConnectionManager<T> manager;
 
@@ -21,6 +36,7 @@ class SharedPool<T> implements Pool<T> {
     return conn;
   }
 
+  /// Returns a connection
   Future<Connection<T>> get() async {
     if (_pool.numAt(0) > 0 || _pool.length >= maxSize) {
       var conn = _pool.leastUsed;
@@ -32,10 +48,11 @@ class SharedPool<T> implements Pool<T> {
 
   final int _d;
 
-  void release(Connection<T> conn) {
-    int count = _pool.countOf(conn);
+  /// Releases [connection] back to the pool
+  void release(Connection<T> connection) {
+    int count = _pool.countOf(connection);
     if (count == null || count == 0) return;
-    _pool.dec(conn);
+    _pool.dec(connection);
     if (_pool.length != maxSize) return;
     if (_pool.numAt(0) < _d) return;
     var removes = _pool.removeAllAt(0);
@@ -49,19 +66,22 @@ class SharedPool<T> implements Pool<T> {
   }
 }
 
+/// A connection
 class Connection<T> {
-  /// The connection pool this connection belongs to.
+  /// The connection [Pool] this connection belongs to.
   final Pool<T> pool;
 
   /// The underlying connection
   T _connection;
 
+  /// Is this connection released to the pool?
   bool isReleased = false;
 
   Connection._(this.pool);
 
   T get connection => _connection;
 
+  /// Releases the connection
   Future<void> release() => pool.release(this);
 }
 
@@ -74,11 +94,15 @@ abstract class ConnectionManager<C> {
   void close(C connection);
 }
 
+/// Interface for pool
 abstract class Pool<T> {
+  /// Contains logic to open and close connections.
   ConnectionManager<T> get manager;
 
+  /// Returns a new connection
   Future<Connection<T>> get();
 
+  /// Releases [connection] back to the pool.
   FutureOr<void> release(Connection<T> connection);
 }
 

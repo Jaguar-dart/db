@@ -1,6 +1,6 @@
 name: conn_pool
 description: A starting point for Dart libraries or applications.
-version: 2.1.1
+version: 2.1.4
 homepage: https://github.com/Jaguar-dart/db
 author: Ravi Teja Gudapati <tejainece@gmail.com>
 

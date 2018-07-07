@@ -1,22 +1,29 @@
 # conn_pool
 
-A library for Dart developers.
+Manages a pool of connections.
 
-Created from templates made available by Stagehand under a BSD-style
-[license](https://github.com/dart-lang/stagehand/blob/master/LICENSE).
+# Shared pool
 
-## Usage
+## Creating a pool
 
-A simple usage example:
+`Pool` requires an instance of `ConnectionManager` to open and close connections.
+In this article, we will use `PostgresManager` for demonstration purposes.
 
-    import 'package:conn_pool/conn_pool.dart';
+```dart
+final pool = SharedPool(PostgresManager('exampleDB'), minSize: 5, maxSize: 10);
+```
 
-    main() {
-      var awesome = new Awesome();
-    }
+## Getting connection
 
-## Features and bugs
+```dart
+Connection<PostgreSQLConnection> conn = await pool.get();
+PostgreSQLConnection db = conn.connection;
+await db.execute(
+        "CREATE TABLE posts (id SERIAL PRIMARY KEY, name VARCHAR(255), age INT);");
+```
 
-Please file feature requests and bugs at the [issue tracker][tracker].
+## Releasing the connection to the pool
 
-[tracker]: http://example.com/issues/replaceme
+```dart
+await conn.release();
+```
