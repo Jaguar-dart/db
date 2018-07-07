@@ -12,11 +12,11 @@ import 'package:jaguar_postgres/jaguar_postgres.dart';
 final postgresPool = PostgresPool('jaguar_learn',
     password: 'dart_jaguar', minPoolSize: 5, maxPoolSize: 10);
 
-Future<void> dbInterceptor(Context ctx) => postgresPool.newInterceptor(ctx);
+Future<void> pgInterceptor(Context ctx) => postgresPool.injectInterceptor(ctx);
 
 @Controller(path: '/post')
 // NOTE: This is how Postgres interceptor is wrapped around a route.
-@Intercept(const [dbInterceptor])
+@Intercept(const [pgInterceptor])
 class PostgresExampleApi {
   Future<Map> _fetchById(pg.PostgreSQLConnection db, int id) async {
     List<Map<String, Map<String, dynamic>>> values =

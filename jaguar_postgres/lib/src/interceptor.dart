@@ -6,7 +6,7 @@ import 'package:jaguar/jaguar.dart';
 import 'package:postgres/postgres.dart';
 import 'package:conn_pool/conn_pool.dart';
 
-import 'pool.dart';
+import 'manager.dart';
 
 class PostgresPool {
   /// The connection pool
@@ -39,11 +39,12 @@ class PostgresPool {
   PostgresPool.fromManager({PostgresManager manager})
       : pool = SharedPool(manager);
 
-  Future<PostgreSQLConnection> newInterceptor(Context ctx) async {
+  /// Injects a Postgres interceptor into current route context
+  Future<PostgreSQLConnection> injectInterceptor(Context context) async {
     Connection<PostgreSQLConnection> conn = await pool.get();
-    ctx.addVariable(conn.connection);
-    ctx.after.add((_) => _releaseConn(conn));
-    ctx.onException.add((Context ctx, _1, _2) => _releaseConn(conn));
+    context.addVariable(conn.connection);
+    context.after.add((_) => _releaseConn(conn));
+    context.onException.add((Context ctx, _1, _2) => _releaseConn(conn));
     return conn.connection;
   }
 

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:conn_pool/conn_pool.dart';
 import 'package:postgres/postgres.dart';
 
+/// [ConnectionManager] for Postgres database
 class PostgresManager extends ConnectionManager<PostgreSQLConnection> {
   /// Hostname of database this connection refers to.
   final String host;
@@ -40,6 +41,7 @@ class PostgresManager extends ConnectionManager<PostgreSQLConnection> {
       this.timeZone: "UTC"});
 
   @override
+  /// Opens a new [PostgreSQLConnection]
   Future<PostgreSQLConnection> open() async {
     PostgreSQLConnection conn = PostgreSQLConnection(host, port, databaseName,
         username: username,
@@ -52,6 +54,7 @@ class PostgresManager extends ConnectionManager<PostgreSQLConnection> {
   }
 
   @override
+  /// Closes the [connection]
   Future<void> close(PostgreSQLConnection connection) {
     return connection.close();
   }
