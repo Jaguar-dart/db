@@ -50,9 +50,12 @@ class SharedPool<T> implements Pool<T> {
 
   /// Releases [connection] back to the pool
   void release(Connection<T> connection) {
-    int count = _pool.countOf(connection);
-    if (count == null || count == 0) return;
-    _pool.dec(connection);
+    if (_d <= 0) return;
+    if (!connection.isReleased) {
+      try {
+        _pool.dec(connection);
+      } catch (e) {}
+    }
     if (_pool.length != maxSize) return;
     if (_pool.numAt(0) < _d) return;
     var removes = _pool.removeAllAt(0);

@@ -43,9 +43,8 @@ class CountedSet<T> {
 
     Set<T> set = _set[count];
     if (set == null) throw Exception('$value is not located at $count!');
-    if (!set.remove(value))
-      throw Exception('$value is not located at $count!');
-    if(set.isEmpty) _set.remove(count);
+    if (!set.remove(value)) throw Exception('$value is not located at $count!');
+    if (set.isEmpty) _set.remove(count);
 
     count++;
     set = _set[count] ??= Set<T>();
@@ -59,9 +58,8 @@ class CountedSet<T> {
 
     Set<T> set = _set[count];
     if (set == null) throw Exception('$value is not located at $count!');
-    if (!set.remove(value))
-      throw Exception('$value is not located at $count!');
-    if(set.isEmpty) _set.remove(count);
+    if (!set.remove(value)) throw Exception('$value is not located at $count!');
+    if (set.isEmpty) _set.remove(count);
 
     count--;
     set = _set[count] ??= Set<T>();
@@ -77,15 +75,15 @@ class CountedSet<T> {
 
   int numAt(int count) {
     Set<T> set = _set[count];
-    if(set == null) return 0;
+    if (set == null) return 0;
     return set.length;
   }
 
   List<T> removeAllAt(int count) {
     Set<T> set = _set[count];
-    if(set == null) return [];
+    if (set == null) return [];
 
-    for(T t in set) _values.remove(t);
+    for (T t in set) _values.remove(t);
     _set.remove(count);
 
     return set.toList();
