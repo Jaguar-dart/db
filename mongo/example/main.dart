@@ -8,7 +8,7 @@ import 'package:mongo_dart/mongo_dart.dart';
 import 'package:jaguar_mongo/jaguar_mongo.dart';
 
 /// Mongo Pool
-final mongoPool = MongoPool('mongodb://localhost:27017/test');
+final mongoPool = MongoPool('mongodb://localhost:27018/test');
 
 @Controller(path: '/contact')
 class ContactApi {

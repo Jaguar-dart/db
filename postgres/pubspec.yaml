@@ -1,5 +1,5 @@
 name: jaguar_postgres
-version: 2.1.8
+version: 2.2.0
 description: A postgres interceptor for Jaguar
 
 authors:
@@ -12,8 +12,8 @@ environment:
 
 dependencies:
   postgres: ^1.0.0
-  jaguar: ^2.1.37
+  jaguar: ^2.2.0
   conn_pool: ^2.1.6
 
 dev_dependencies:
-  jaguar_reflect: ^2.1.6
+  jaguar_reflect: ^2.2.0

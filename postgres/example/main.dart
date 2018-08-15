@@ -56,7 +56,7 @@ Future<void> setup() async {
   }
 }
 
-Future<Null> main(List<String> args) async {
+Future<void> main() async {
   await setup();
 
   final server = new Jaguar(port: 10000);
