@@ -12,7 +12,7 @@ environment:
 
 dependencies:
   mongo_dart: ^0.3.2
-  conn_pool: ^2.1.6
+  conn_pool: ^2.1.8
   jaguar: ^2.2.4
 
 dev_dependencies:

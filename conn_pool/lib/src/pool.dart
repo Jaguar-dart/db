@@ -91,10 +91,10 @@ class Connection<T> {
 /// Interface to open and close the connection [C]
 abstract class ConnectionManager<C> {
   /// Establishes and returns a new connection
-  Future<C> open();
+  FutureOr<C> open();
 
   /// Closes provided[connection]
-  void close(C connection);
+  FutureOr<void> close(C connection);
 }
 
 /// Interface for pool
