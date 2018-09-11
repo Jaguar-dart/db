@@ -1,11 +1,10 @@
 name: jaguar_sqljocky
 description: MySQL interceptor for jaguar
 version: 1.0.0
-homepage: https://github.com/Jaguar-dart/jaguar_sqljocky
 
 authors:
 - Ravi Teja Gudapati <tejainece@gmail.com>
-
+- Mattia <hexer504@gmail.com>
 homepage: https://github.com/Jaguar-dart/db/wiki
 
 environment:
