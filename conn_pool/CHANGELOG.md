@@ -1,5 +1,9 @@
 # Change log
 
+## 2.1.9
+
++ Bug fix
+
 ## 2.1.5
 
 + Minor improvements to `SharedPool` release

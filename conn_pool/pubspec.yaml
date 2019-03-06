@@ -1,6 +1,6 @@
 name: conn_pool
 description: Manages a pool of connections based several builtin strategies.
-version: 2.1.8
+version: 2.1.9
 homepage: https://github.com/Jaguar-dart/db
 author: Ravi Teja Gudapati <tejainece@gmail.com>
 

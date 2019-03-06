@@ -30,9 +30,9 @@ class SharedPool<T> implements Pool<T> {
 
   Future<Connection<T>> _createNew() async {
     var conn = Connection._(this);
-    _pool.add(1, conn);
     T n = await manager.open();
     conn._connection = n;
+    _pool.add(1, conn);
     return conn;
   }
 
