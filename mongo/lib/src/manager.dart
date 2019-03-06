@@ -17,7 +17,7 @@ class MongoDbManager extends ConnectionManager<mongo.Db> {
   /// Opens a new connection
   @override
   Future<mongo.Db> open() async {
-    mongo.Db db = new mongo.Db(uri);
+    mongo.Db db = mongo.Db(uri);
     await db.open(writeConcern: writeConcern);
     return db;
   }

@@ -1,4 +1,4 @@
-import 'package:http/http.dart';
+import 'package:http/io_client.dart';
 import 'package:jaguar_resty/jaguar_resty.dart' as resty;
 
 main() async {

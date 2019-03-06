@@ -10,8 +10,8 @@ import 'package:jaguar_mongo/jaguar_mongo.dart';
 /// Mongo Pool
 final mongoPool = MongoPool('mongodb://localhost:27018/test');
 
-@Controller(path: '/contact')
-class ContactApi {
+@GenController(path: '/contact')
+class ContactApi extends Controller {
   @GetJson()
   Future<List> readAll(Context ctx) async {
     Db db = await mongoPool.injectInterceptor(ctx); // Get [Db]
